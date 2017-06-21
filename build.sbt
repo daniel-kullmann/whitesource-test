@@ -2,7 +2,10 @@ import WhiteSourcePlugin.autoImport._
 
 lazy val dataCore = (crossProject in file("core"))
   .enablePlugins(WhiteSourcePlugin)
-  .settings(name := "data.core")
+  .settings(
+    name := "data.core",
+    scalaVersion in ThisBuild := "2.11.8"
+  )
 
 lazy val dataCoreJVM = dataCore.jvm
 
