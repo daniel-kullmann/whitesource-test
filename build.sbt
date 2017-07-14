@@ -1,47 +1,29 @@
 import WhiteSourcePlugin.autoImport._
 
-lazy val dataCore = (crossProject in file("core"))
+lazy val core = (crossProject in file("core"))
   .enablePlugins(WhiteSourcePlugin)
   .settings(
-    name := "data.core",
+    name := "core",
     scalaVersion in ThisBuild := "2.11.8",
-    libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-    libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.8",
-    libraryDependencies += "org.scalikejdbc" %% "scalikejdbc" % "2.5.0",
-    libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.11.8",
+    libraryDependencies += "org.json4s" %% "json4s-native" % "3.3.0"
   )
 
-lazy val dataCoreJVM = dataCore.jvm
+lazy val coreJVM = core.jvm
 
-lazy val dataCoreJS = dataCore.js
-
-lazy val dataSql = (crossProject in file("sql"))
-  .enablePlugins(WhiteSourcePlugin)
-  .settings(name := "data.sql")
-
-lazy val dataSqlJVM = dataSql.jvm
-  .dependsOn(dataCoreJVM)
-
-lazy val dataSqlJS = dataSql.js
-  .dependsOn(dataCoreJS)
+lazy val coreJS = core.js
 
 lazy val root = project.in(file("."))
   .enablePlugins(WhiteSourcePlugin)
-  .aggregate(dataCoreJS, dataCoreJVM, dataSqlJS, dataSqlJVM)
-  .settings(
-    exportJars := false,
-    publishArtifact := false,
-    publish := {},
-    publishTo := None,
-    publishLocal := {})
+  .aggregate(coreJS, coreJVM)
   .settings(
     credentials += Credentials(
       realm = "whitesource",
       host = "whitesourcesoftware.com",
       userName = "",
-      passwd = "yadayada"
+      passwd = sys.env.get("WHITESOURCE_API_KEY").get
     ),
-    whitesourceProduct in ThisBuild  := "yadayada",
-    whitesourceAggregateProjectName in ThisBuild  := "yadayada"
+    whitesourceProduct in ThisBuild  := sys.env.get("WHITESOURCE_PRODUCT").get,
+    whitesourceAggregateProjectName in ThisBuild  := sys.env.get("WHITESOURCE_PROJECT_NAME").get,
+    whitesourceAggregateProjectToken in ThisBuild  := sys.env.get("WHITESOURCE_PROJECT_TOKEN").get
   )
-
