@@ -1,21 +1,21 @@
 import WhiteSourcePlugin.autoImport._
 
-lazy val core = (crossProject in file("core"))
+lazy val test = (crossProject in file("test"))
   .enablePlugins(WhiteSourcePlugin)
   .settings(
-    name := "core",
+    logLevel in Global := Level.Debug,
+    name := "test",
     scalaVersion in ThisBuild := "2.11.8",
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.11.8",
     libraryDependencies += "org.json4s" %% "json4s-native" % "3.3.0"
   )
 
-lazy val coreJVM = core.jvm
+lazy val testJVM = test.jvm
 
-lazy val coreJS = core.js
+lazy val testJS = test.js
 
 lazy val root = project.in(file("."))
   .enablePlugins(WhiteSourcePlugin)
-  .aggregate(coreJS, coreJVM)
+  .aggregate(testJS, testJVM)
   .settings(
     credentials += Credentials(
       realm = "whitesource",
